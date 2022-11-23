@@ -34,20 +34,35 @@ class Node:
             self.children.append(child)
 
 
+<<<<<<< HEAD
 class SelectorNode(Node): # 아래중 하나만 SUCCESS여도 가능
     def __init__(self, name):
         self.children = []
+=======
+class Selector(Node):
+    def __init__(self, name, *nodes):
+        self.children = list(nodes)
+>>>>>>> c0296a243c1f50f168834b49f662a7f8cb8c036f
         self.name = name
         self.prev_running_pos = 0 # 앞선 실행에서, RUNNING으로 리턴한 자식 노드 위치를 저장
 
+    def reset(self):
+        self.prev_running_pos = 0
+        for node in self.children:
+            node.reset()
+
+
     def run(self):
-        for pos in range(self.prev_running_pos, len(self.children)):
+        for pos in range(0, len(self.children)):
             result = self.children[pos].run()
             if BehaviorTree.RUNNING == result:
                 self.prev_running_pos = pos
                 return BehaviorTree.RUNNING
             elif BehaviorTree.SUCCESS == result:
                 self.prev_running_pos = 0
+                # now success, so right nodes (less import nodes) should be reset
+                for node in self.children[pos+1:]:
+                    node.reset()
                 return BehaviorTree.SUCCESS
         self.prev_running_pos = 0
         return BehaviorTree.FAIL
@@ -60,11 +75,23 @@ class SelectorNode(Node): # 아래중 하나만 SUCCESS여도 가능
             child.print()
         unindent()
 
+<<<<<<< HEAD
 class SequenceNode(Node): # 아래 있는 게 모두 SUCCESS여야 가능
     def __init__(self, name):
         self.children = []
+=======
+class Sequence(Node):
+    def __init__(self, name, *nodes):
+        self.children = list(nodes)
+>>>>>>> c0296a243c1f50f168834b49f662a7f8cb8c036f
         self.name = name
         self.prev_running_pos = 0
+
+    def reset(self):
+        self.prev_running_pos = 0
+        for node in self.children:
+            node.reset()
+
 
     def run(self):
         for pos in range(self.prev_running_pos, len(self.children)):
@@ -87,10 +114,13 @@ class SequenceNode(Node): # 아래 있는 게 모두 SUCCESS여야 가능
         unindent()
 
 
-class LeafNode(Node):
+class Leaf(Node):
     def __init__(self, name, func):
         self.name = name
         self.func = func
+
+    def reset(self):
+        pass
 
     def add_child(self, child):
         print("ERROR: you cannot add child node to leaf node")
