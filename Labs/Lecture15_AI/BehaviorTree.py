@@ -34,11 +34,11 @@ class Node:
             self.children.append(child)
 
 
-class SelectorNode(Node):
+class SelectorNode(Node): # 아래중 하나만 SUCCESS여도 가능
     def __init__(self, name):
         self.children = []
         self.name = name
-        self.prev_running_pos = 0
+        self.prev_running_pos = 0 # 앞선 실행에서, RUNNING으로 리턴한 자식 노드 위치를 저장
 
     def run(self):
         for pos in range(self.prev_running_pos, len(self.children)):
@@ -60,7 +60,7 @@ class SelectorNode(Node):
             child.print()
         unindent()
 
-class SequenceNode(Node):
+class SequenceNode(Node): # 아래 있는 게 모두 SUCCESS여야 가능
     def __init__(self, name):
         self.children = []
         self.name = name
